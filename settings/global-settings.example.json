@@ -1,0 +1,34 @@
+{
+  "_comment": "Reference for ~/.claude/settings.json — shows plugin structure, no secrets",
+  "model": "sonnet",
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "searchfit-seo@claude-plugins-official": true,
+    "bkit@bkit-marketplace": true,
+    "qa-scenario-gen@local-skills": true,
+    "vulnerability-scanner@local-skills": true,
+    "prompt-engineering@local-skills": true,
+    "reducing-entropy@local-skills": true,
+    "changelog-gen@local-skills": true,
+    "parallel-agents@local-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "local-skills": {
+      "source": {
+        "source": "git",
+        "url": "file:///<YOUR_HOME>/.claude/plugins/local-skills"
+      }
+    },
+    "bkit-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "popup-studio-ai/bkit-claude-code"
+      }
+    }
+  }
+}

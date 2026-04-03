@@ -1,0 +1,69 @@
+{
+  "_comment": "Copy to .claude/settings.json and replace <PROJECT_ROOT> with your actual path",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"<PROJECT_ROOT>/.claude/hooks/validate-commit.py\"",
+            "timeout": 10,
+            "statusMessage": "Validating commit message..."
+          },
+          {
+            "type": "command",
+            "command": "python3 \"<PROJECT_ROOT>/.claude/hooks/pre-push-qa.py\"",
+            "timeout": 120,
+            "statusMessage": "Running pre-push QA tests..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"<PROJECT_ROOT>/.claude/hooks/no-localstorage.py\"",
+            "timeout": 10,
+            "statusMessage": "Checking localStorage usage..."
+          }
+        ]
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"<PROJECT_ROOT>/.claude/hooks/subagent-verify.py\"",
+            "timeout": 5,
+            "statusMessage": "Verifying agent..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"<PROJECT_ROOT>/.claude/hooks/usage-tracker.py\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"<PROJECT_ROOT>/.claude/hooks/task-qa-gate.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

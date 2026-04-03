@@ -1,0 +1,17 @@
+# 환경 변수 및 시크릿
+.env
+.env.*
+*.secret
+secrets.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 에디터
+.vscode/
+.idea/
+*.swp
+
+# 백업
+*.bak
