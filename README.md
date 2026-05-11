@@ -46,6 +46,18 @@ Ops ───────────── docs-writer            (README·API 
 | specialist **2개 이하** | manager-orchestrator 단독 |
 | specialist **3개 이상** | team-orchestrator + 팀 풀 |
 
+## PAL Router — 모델 배정
+
+태스크 복잡도에 따라 모델을 선택합니다. 역할별 고정 배정보다 비용 효율적입니다.
+
+| Tier | 모델 | 적합한 태스크 |
+|------|------|-------------|
+| T1 Haiku | `claude-haiku-4-5` | 상태 업데이트, 문서 기록, 단순 조회, 보고서 생성 |
+| T2 Sonnet | `claude-sonnet-4-6` | 코드 구현, 코드 리뷰, API 설계, 일반 분석 |
+| T3 Opus | `claude-opus-4-7` | 아키텍처 결정, gap 분석, Unstuck 판정, 보안 심층 감사 |
+
+
+
 ## 필수 검증 워크플로우 (코딩·디버깅)
 
 ```
@@ -109,6 +121,36 @@ done
 # 5. settings.json 적용
 # settings/project-settings.example.json 참고하여 .claude/settings.json 작성
 ```
+
+## Ouroboros 통합 패턴
+
+[Ouroboros](https://github.com/Q00/ouroboros) Agent OS에서 채택한 7개 워크플로우 패턴.
+외부 CLI 설치 없이 CLAUDE.md 파일만으로 동작합니다.
+
+| # | 패턴 | 설명 | 적용 위치 |
+|---|------|------|----------|
+| 1 | **Ambiguity Score** | 모호성 수치화 게이트 — Ambiguity ≤ 0.2 이어야 코딩 진행 | `/pdca plan` 전 |
+| 2 | **Locked Seed** | 핵심 결정 LOCKED 마커 표기, 변경 시 사용자 확인 필수 | Context Anchor |
+| 3 | **Contrarian Check** | 구현 핵심 가정을 역으로 검증 (반대가 맞다면?) | QA 체크리스트 |
+| 4 | **Stagnation Detection** | iterate 간 출력 비교, 변화 없으면 retry 차감 없이 Unstuck | iterate 2회차+ |
+| 5 | **Unstuck 5-Step** | retry 3회 후 5가지 Mind 관점으로 회복 시도 | 루프 차단 확장 |
+| 6 | **Wonder/Reflect** | 실패에서 가설 발산 → 최적 가설 수렴 선택 | `/pdca iterate` |
+| 7 | **PAL Router** | 태스크 복잡도 기반 Haiku/Sonnet/Opus 3-tier 선택 | 모든 세션 |
+
+### Unstuck 5-Step 상세
+
+`retry 1 → retry 2 → retry 3 → [Unstuck] → 사용자 판단 요청`
+
+| Mind | 질문 |
+|------|------|
+| Socratic | 지금 무엇을 가정하고 있는가? |
+| Contrarian | 반대 접근이 맞다면 무엇이 틀린 것인가? |
+| Simplifier | 기능을 절반으로 줄여도 가치가 있는가? |
+| Researcher | 코드베이스 안에 선행 사례가 있는가? |
+| Architect | 처음부터 다시 설계하면 어떻게 달라지는가? |
+
+→ 1개 이상 새 방향 발견 → retry 1회 추가 (총 4회)
+→ 새 방향 없음 → 사용자 판단 요청
 
 ## 레퍼런스
 
