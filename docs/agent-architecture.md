@@ -12,9 +12,20 @@
 - 구현한 에이전트가 자기 코드를 스스로 최종 승인 금지
 - 검증 없이 완료 선언 금지
 
-### 3. 무한 루프 차단
+### 3. 무한 루프 차단 — Unstuck 5-Step 확장 (2026-05-11)
 - 수정-재검증 루프 최대 3회
-- 초과 시 즉시 중단 → 사용자 판단 요청
+- 3회 소진 후 → Unstuck 5-Step 1회 실행
+- Unstuck에서도 새 방향 없음 → 사용자 판단 요청
+
+**Unstuck 5-Step (Ouroboros 패턴 차용):**
+
+| Mind | 질문 |
+|------|------|
+| Socratic | 지금 무엇을 가정하고 있는가? |
+| Contrarian | 반대 접근이 맞다면 무엇이 틀린 것인가? |
+| Simplifier | 기능을 절반으로 줄여도 가치가 있는가? |
+| Researcher | 코드베이스 안에 선행 사례가 있는가? |
+| Architect | 처음부터 다시 설계하면 어떻게 달라지는가? |
 
 ### 4. 파일 기반 컨텍스트 전달
 - 에이전트 간 구두 요약 전달보다 파일 경로 직접 참조 우선
@@ -111,10 +122,20 @@ gap-detector        ──→ Match Rate   ─┘
 
 ## 모델 할당 권장
 
-| 에이전트 | 권장 모델 | 이유 |
-|---------|----------|------|
-| 오케스트레이터 | opus | 복잡한 조율 판단 |
-| security-auditor | opus | 정밀 취약점 분석 |
-| gap-detector (검증) | opus | 높은 정확도 필요 |
-| 나머지 모든 에이전트 | sonnet | 비용 효율 |
-| pm-lead (신규 기획 시만) | opus | 전략적 판단 |
+### PAL Router 3-Tier (2026-05-11 업데이트)
+
+고정 배정 대신 태스크 복잡도 기반으로 선택합니다.
+
+| Tier | 모델 | 적합한 태스크 |
+|------|------|-------------|
+| **T1** Haiku | `claude-haiku-4-5` | 상태 업데이트, 문서 기록, 단순 조회 |
+| **T2** Sonnet | `claude-sonnet-4-6` | 코드 구현, 코드 리뷰, API 설계 |
+| **T3** Opus | `claude-opus-4-7` | 아키텍처 결정, gap 분석, Unstuck 판정 |
+
+에이전트별 권장 Tier:
+
+| 에이전트 | 권장 Tier |
+|---------|----------|
+| 오케스트레이터, security-auditor, gap-detector | T3 Opus |
+| 구현 에이전트, code-reviewer, qa-strategist | T2 Sonnet |
+| report-generator, qa-monitor, 상태 기록 | T1 Haiku |
